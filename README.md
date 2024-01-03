@@ -1,7 +1,7 @@
 ## Zero-Shot-Implement-Pytorch
 ------
 ### 2015
-####  [An embarrassingly simple approach to zero-shot learning](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/An%20embarrassingly%20simple%20approach%20to%20zero-shot%20learning)
+####  [An embarrassingly simple approach to zero-shot learning](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/EsZSL)
 
 ##### Dir Structure
     ```python
