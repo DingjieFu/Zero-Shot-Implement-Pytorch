@@ -14,6 +14,6 @@
     -->best_val_hyperparams.sh
     ```
 ##### Dataset
-​	链接：https://pan.baidu.com/s/1SVtMxKArCG6XHaqpNJGuDQ  提取码：1r18
+    ​链接：https://pan.baidu.com/s/1SVtMxKArCG6XHaqpNJGuDQ  提取码：1r18
 ##### Main Idea
-    learn V(d·a) which denotes the relation between features and attributes
+    learn V∈(d·a) which denotes the relation between features and attributes
