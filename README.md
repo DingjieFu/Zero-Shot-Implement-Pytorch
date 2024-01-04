@@ -4,7 +4,7 @@
 ####  [Semantic Autoencoder for Zero-Shot Learning](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/SAE)
 ##### Dir Structure & Dataset -> the same as [Here](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/EsZSL)
 ##### Support -> APY|AWA1|AWA2|CUB|SUN 
-:joy: But the accuracy is quiet low, there must be some mistake
+:joy: But the accuracy is quite low, there must be some mistake
 
 ##### Main Idea
 
