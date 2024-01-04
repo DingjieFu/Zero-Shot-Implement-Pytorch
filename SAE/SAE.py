@@ -84,9 +84,9 @@ if __name__ == '__main__':
     parser.add_argument('--ld', type=float, default=500000) # lambda
     args = parser.parse_args()
     # ======================================== data loader ======================================== #
-    # 字典 dict_keys(['__header__', '__version__', '__globals__', 'image_files', 'features', 'labels'])
+    # dict_keys(['__header__', '__version__', '__globals__', 'image_files', 'features', 'labels'])
     res101 = scipy.io.loadmat(args.dataset_path + args.dataset + '/res101.mat')
-    # 字典 dict_keys(['__header__', '__version__', '__globals__', 'allclasses_names', 'att', 
+    # dict_keys(['__header__', '__version__', '__globals__', 'allclasses_names', 'att', 
 	#         'original_att', 'test_seen_loc', 'test_unseen_loc', 'train_loc', 'trainval_loc', 'val_loc'])
     att_splits = scipy.io.loadmat(args.dataset_path + args.dataset + '/att_splits.mat')
     trainval_loc = 'trainval_loc'
@@ -102,17 +102,22 @@ if __name__ == '__main__':
     labels_test = Labels[np.squeeze(att_splits[test_loc]-1)]
     trainval_attr = Attributes[:, np.squeeze(labels_trainval-1)] # (K x N)
     test_attr = Attributes[:, np.squeeze(labels_test-1)] # (K x N')
-
-    test_label_unique = np.unique(labels_test) 
-    i = 0
-    for label in test_label_unique:
-        labels_test[labels_test == label] = i
-        i = i + 1
+    # print(trainval_data.shape)
+    # print(test_data.shape)
+    # print(labels_trainval.shape)
+    # print(labels_test.shape)
+    # print(trainval_attr.shape)
+    # print(test_attr.shape)
+    # test_label_unique = np.unique(labels_test) 
+    # i = 0
+    # for label in test_label_unique:
+    #     labels_test[labels_test == label] = i
+    #     i = i + 1
     args.test_labels = np.squeeze(labels_test)
     
     # Normalize the data
     train_data = normalizeFeature(trainval_data)
-
+  
     # ======================================== train ======================================== #
     model = SAE(train_data, trainval_attr, args.ld)
     W = model.calc_projection_matrix() # (k x d)
@@ -122,10 +127,10 @@ if __name__ == '__main__':
 
     # [F --> S], projecting data from feature space to semantic space
     semantic_predicted = np.dot(test_data.transpose(), normalizeFeature(W).transpose()) # (N x K)
-    zsl_accuracy, y_hit_k = zsl_acc(semantic_predicted.transpose(), test_attr, args)
+    zsl_accuracy, _ = zsl_acc(semantic_predicted.transpose(), test_attr, args)
     print(f'[1] zsl accuracy for {args.dataset} dataset [F >>> S]: {zsl_accuracy:.2f}%')
 
     # [S --> F], projecting from semantic to visual space
     test_predicted = np.dot(normalizeFeature(test_attr).transpose(), normalizeFeature(W)) # (N x d)
-    zsl_accuracy, y_hit_k = zsl_acc(test_data, test_predicted.transpose(), args)
+    zsl_accuracy, _ = zsl_acc(test_predicted.transpose(), test_data, args)
     print(f'[2] zsl accuracy for {args.dataset} dataset [S >>> F]: {zsl_accuracy:.2f}%')
