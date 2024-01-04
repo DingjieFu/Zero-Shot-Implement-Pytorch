@@ -149,7 +149,6 @@ if __name__ == "__main__":
 	val_loc = 'val_loc' # resNet101.mat中验证集特征的实例索引
 	trainval_loc = 'trainval_loc' # resNet101.mat中训练集+验证集 特征的实例索引
 	test_loc = 'test_unseen_loc'#  # resNet101.mat中测试集特征的实例索引
-
 	Labels = res101['labels'] # (11788,1) 11788个样本 label为 1-200 共200个标签
 	X_features = res101['features'] # shape --> (2048, 11788) 其列对应与实例
 	Signatures = att_splits['att'] # shape --> (312,200) 列对应于标准化为具有单位L2范数的类属性向量
