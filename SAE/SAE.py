@@ -117,7 +117,7 @@ if __name__ == '__main__':
     # ======================================== test ======================================== #
     args.HITK = 1
     # [F --> S], projecting data from feature space to semantic space
-    semantic_predicted = np.dot(test_data.transpose(), normalizeFeature(W)) # (N x K)
+    semantic_predicted = np.dot(test_data.transpose(), normalizeFeature(W).transpose()) # (N x K)
     zsl_accuracy, _ = zsl_acc(semantic_predicted.transpose(), test_attr, args)
     print(f'[1] zsl accuracy for {args.dataset} dataset [F >>> S]: {zsl_accuracy:.2f}%')
     # [S --> F], projecting from semantic to visual space
