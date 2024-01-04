@@ -138,16 +138,16 @@ if __name__ == "__main__":
 	parser.add_argument('--Lambda', type=int, default=0,
 						help='value of hyper-parameter')
 	args = parser.parse_args()
-	# ======================================== data process ======================================== #
+	# ======================================== data loader ======================================== #
 	# 字典 dict_keys(['__header__', '__version__', '__globals__', 'image_files', 'features', 'labels'])
 	res101 = scipy.io.loadmat(args.dataset_path + args.dataset + '/res101.mat')
 	# 字典 dict_keys(['__header__', '__version__', '__globals__', 'allclasses_names', 'att', 
 	#         'original_att', 'test_seen_loc', 'test_unseen_loc', 'train_loc', 'trainval_loc', 'val_loc'])
 	att_splits = scipy.io.loadmat(args.dataset_path + args.dataset + '/att_splits.mat')
 
-	trainval_loc = 'trainval_loc' # resNet101.mat中训练集+验证集 特征的实例索引
 	train_loc = 'train_loc' # resNet101.mat中训练集特征的实例索引
 	val_loc = 'val_loc' # resNet101.mat中验证集特征的实例索引
+	trainval_loc = 'trainval_loc' # resNet101.mat中训练集+验证集 特征的实例索引
 	test_loc = 'test_unseen_loc'#  # resNet101.mat中测试集特征的实例索引
 
 	Labels = res101['labels'] # (11788,1) 11788个样本 label为 1-200 共200个标签
