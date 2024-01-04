@@ -132,5 +132,5 @@ if __name__ == '__main__':
 
     # [S --> F], projecting from semantic to visual space
     test_predicted = np.dot(normalizeFeature(test_attr).transpose(), normalizeFeature(W)) # (N x d)
-    zsl_accuracy, _ = zsl_acc(test_predicted.transpose(), test_data, args)
+    zsl_accuracy, _ = zsl_acc(test_data, test_predicted.transpose(), args)
     print(f'[2] zsl accuracy for {args.dataset} dataset [S >>> F]: {zsl_accuracy:.2f}%')
