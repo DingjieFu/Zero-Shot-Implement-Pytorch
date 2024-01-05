@@ -80,7 +80,7 @@ def zsl_acc(S_pred, S_gt, args):
 if __name__ == '__main__':
     # ======================================== paramters ======================================== #
     parser = argparse.ArgumentParser(description='SAE')
-    parser.add_argument('--dataset_path', type=str, default='dataset/',
+    parser.add_argument('--dataset_path', type=str, default='SAE/dataset/',
                         help='Name of the dataset')
     parser.add_argument('--dataset', type=str, default='AWA1',
                         help='Name of the dataset')
