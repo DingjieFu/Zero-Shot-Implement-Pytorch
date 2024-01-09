@@ -1,10 +1,13 @@
 # Zero-Shot-Implement-Pytorch
 ------
+## 2018
+###  [Semantic Autoencoder for Zero-Shot Learning](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/FGN)
+#### <font color=red>Waiting for modify</font>
 ## 2017
 ###  [Semantic Autoencoder for Zero-Shot Learning](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/SAE)
 #### Dir Structure & Dataset -> the same as [Here](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/EsZSL)
 #### Support -> APY|AWA1|AWA2|CUB|SUN 
-:joy: **<font color=blue>But the accuracy is quite low, there must be some mistake(<font color=red>Unsolved</font>)</font>**
+:joy: **<font color=blue>But the accuracy is quite low, there must be some mistake(<font color=red>Unaddressed</font>)</font>**
 #### Main Idea
 F -> S and then S -> F, a symmetric structure
 ## 2015
