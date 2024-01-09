@@ -2,7 +2,7 @@
 ------
 ## 2018
 ###  [Semantic Autoencoder for Zero-Shot Learning](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/FGN)
-#### <font color=red>Waiting for modify</font>
+#### <font color=red>On modifying</font>
 ## 2017
 ###  [Semantic Autoencoder for Zero-Shot Learning](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/SAE)
 #### Dir Structure & Dataset -> the same as [Here](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/EsZSL)
