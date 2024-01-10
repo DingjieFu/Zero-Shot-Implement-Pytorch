@@ -1,7 +1,7 @@
 # Zero-Shot-Implement-Pytorch
 ------
 ## 2018
-###  [Semantic Autoencoder for Zero-Shot Learning](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/FGN)
+###  [Feature Generating Networks for Zero-Shot Learning](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/FGN)
 #### <font color=red>On modifying</font>
 ## 2017
 ###  [Semantic Autoencoder for Zero-Shot Learning](https://github.com/DingjieFu/Zero-Shot-Implement-Pytorch/tree/main/SAE)
