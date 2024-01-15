@@ -28,7 +28,7 @@ class Trainer:
         self.z_dim = z_dim
         self.attr_dim = attr_dim
 
-        self.n_critic = kwargs.get('n_critic', 1)
+        self.HITK = kwargs.get('HITK', 1)
         self.lmbda = kwargs.get('lmbda', 10.0)
         self.beta = kwargs.get('beta', 0.01)
         self.bs = kwargs.get('batch_size', 32)
@@ -129,7 +129,7 @@ class Trainer:
         # optimize discriminator
         # =============================================================
         X_real = self.get_conditional_input(img_features, label_attr)
-        for _ in range(self.n_critic):
+        for _ in range(self.HITK):
             Z = self.Z_dist.sample(self.z_shape).to(self.device)
             Z = self.get_conditional_input(Z, label_attr)
 

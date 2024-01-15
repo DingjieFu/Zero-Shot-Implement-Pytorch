@@ -18,13 +18,13 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 class ZSLDataset(Dataset):
-    def __init__(self, dset, n_train, n_test, gzsl=False, train=True, synthetic=False, syn_dataset=None):
+    def __init__(self, dset, n_train, n_test, gzsl=False, is_train=True, synthetic=False, syn_dataset=None):
         '''
             - dset: Name of dataset - among [sun, cub, awa1, awa2]
             - n_train: Number of train classes
             - n_test: Number of test classes
             - gzsl: Boolean for Generalized ZSL
-            - train: Boolean indicating whether train/test
+            - is_train: Boolean indicating whether train/test
             - synthetic: Boolean indicating whether dataset is for synthetic examples
             - syn_dataset: A list consisting of 3-tuple (z, _, y) used for sampling only when synthetic flag is True
         '''
@@ -32,33 +32,22 @@ class ZSLDataset(Dataset):
         self.dset = dset
         self.n_train = n_train
         self.n_test = n_test
-        self.train = train
+        self.train = is_train
         self.gzsl = gzsl
         self.synthetic = synthetic
 
         # feature
-        res101_data = scipy.io.loadmat('dataset/%s/res101.mat' % dset)
-        self.features = self.normalize(res101_data['features'].T)  # (d x N)
-        self.labels = res101_data['labels'].reshape(-1)
+        res101 = scipy.io.loadmat('%s/res101.mat' % dset)
+        # (sample_nums x feature_dims)
+        self.features = self.normalize(res101['features'].T)
+        self.labels = res101['labels'].reshape(-1)
 
         # attribute
-        self.attribute_dict = scipy.io.loadmat(
-            'dataset/%s/att_splits.mat' % dset)
-        self.attributes = self.attribute_dict['att'].T
+        self.att_splits = scipy.io.loadmat('%s/att_splits.mat' % dset)
+        # (class_nums x attributes_dims)
+        self.attributes = self.att_splits['att'].T
 
-        # all class names file
-        if not os.path.exists('dataset/%s/allclasses.txt' % dset):
-            with open('dataset/%s/allclasses.txt' % dset, 'w') as f:
-                for cls in self.attribute_dict["allclasses_names"]:
-                    lines = cls[0][0] + "\n"
-                    f.writelines(lines)
-        self.class_names_file = 'dataset/%s/allclasses.txt' % dset
-
-        # test class names
-        with open('dataset/%s/testclasses.txt' % dset) as fp:
-            self.test_class_names = [i.strip()
-                                     for i in fp.readlines() if i != '']
-        assert len(self.test_class_names) == self.n_test
+        self.get_classData()
 
         # whether dataset is for synthetic examples
         if self.synthetic:
@@ -76,33 +65,26 @@ class ZSLDataset(Dataset):
         scaler = MinMaxScaler()
         return scaler.fit_transform(matrix)
 
-    def get_classmap(self):
+    def get_classData(self):
         '''
-            - Creates a mapping between class number and indice
-            - train_classmap -> train classes
-            - test_classmap -> test classes
+            - get -> sample index | class label | class feature
         '''
-        with open(self.class_names_file) as fp:
-            all_classes = fp.readlines()
-
-        test_count = 0
-        train_count = 0
-
-        train_classmap = dict()
-        test_classmap = dict()
-        for idx, line in enumerate(all_classes):
-            name = line.strip()
-            if name in self.test_class_names:
-                if self.gzsl:
-                    # train classes are also included in test time
-                    test_classmap[int(idx+1)] = self.n_train + test_count
-                else:
-                    test_classmap[int(idx+1)] = test_count
-                test_count += 1
-            else:
-                train_classmap[int(idx+1)] = train_count
-                train_count += 1
-        return train_classmap, test_classmap
+        # sample index
+        self.trainval_index = self.att_splits['trainval_loc'].reshape(-1)
+        self.test_index = self.att_splits['test_unseen_loc'].reshape(-1)
+        # sample label(-1 -> self.labels is a array, to get its idx)
+        # (train_samples x 1)
+        self.labels_trainval = self.labels[self.trainval_index-1]
+        # (test_samples x 1)
+        self.labels_test = self.labels[self.test_index-1]
+        # class label(unique)
+        self.trainval_labels = np.unique(self.labels_trainval)
+        self.test_labels = np.unique(self.labels_test)
+        # class feature
+        # (train_samples x feature_dims)
+        self.trainval_feats = self.features[self.trainval_index-1]
+        # (test_samples x feature_dims)
+        self.test_feats = self.features[self.test_index-1]
 
     def create_gzsl_dataset(self, n_samples=200):
         '''
@@ -126,39 +108,46 @@ class ZSLDataset(Dataset):
         '''
             - Return dataset(feature, label_in_dataset, label_for_classification)
         '''
-        self.train_classmap, self.test_classmap = self.get_classmap()
-
         if self.train:
-            labels = self.attribute_dict['trainval_loc'].reshape(-1)
-            classmap = self.train_classmap
+            labels_index = self.trainval_index
+            # classmap = self.train_classmap
             self.gzsl_map = dict()
         else:
-            labels = self.attribute_dict['test_unseen_loc'].reshape(-1)
+            labels = self.att_splitst['test_unseen_loc'].reshape(-1)
             if self.gzsl:
                 labels = np.concatenate(
-                    (labels, self.attribute_dict['test_seen_loc'].reshape(-1)))
+                    (labels, self.att_splits['test_seen_loc'].reshape(-1)))
                 classmap = {**self.train_classmap, **self.test_classmap}
             else:
                 classmap = self.test_classmap
 
         dataset = []
-        for l in labels:
-            idx = self.labels[l - 1]
-            dataset.append((self.features[l - 1], idx, classmap[idx]))
+        for li in labels_index:
+            label = self.labels[li - 1]
+            # the index of this label in the array(self.trainval_labels)
+            label_idx = self.trainval_labels.tolist().index(label)
+            print(label)
+            print(label_idx)
+            dataset.append((self.trainval_feats[li - 1], label))
+            print(dataset[0])
+
             if self.train:
                 # create a map bw class label and features
-                if self.gzsl_map.get(classmap[idx], None):
+                if self.gzsl_map.get(label_idx, None):
                     try:
-                        self.gzsl_map[classmap[idx]]['feat'].append(
-                            self.features[l - 1])
+                        self.gzsl_map[label_idx]['feat'].append(
+                            self.features[li - 1])
                     except Exception:
-                        self.gzsl_map[classmap[idx]]['feat'] = [
-                            self.features[l - 1]]
+                        self.gzsl_map[label_idx]['feat'] = [
+                            self.features[li - 1]]
                 else:
-                    self.gzsl_map[classmap[idx]] = {}
+                    self.gzsl_map[label_idx] = {}
 
                 # Add the label to map
-                self.gzsl_map[classmap[idx]]['label'] = idx
+                self.gzsl_map[label_idx]['label'] = label
+                print(self.gzsl_map)
+                exit()
+
         return dataset
 
     def __getitem__(self, index):
